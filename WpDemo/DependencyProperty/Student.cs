@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace WpDemo.DependencyProperty
+namespace WpfDemo.DependencyProperty
 {
     public class Student : DependencyObject
     {
@@ -16,12 +16,23 @@ namespace WpDemo.DependencyProperty
         }
 
         public static readonly System.Windows.DependencyProperty NameProperty =
-            System.Windows.DependencyProperty.Register("Name", typeof(string), typeof(Student), new PropertyMetadata(new PropertyChangedCallback(OnNameChanged)));
+            System.Windows.DependencyProperty.Register("Name", typeof(string), typeof(Student), new PropertyMetadata(string.Empty, new PropertyChangedCallback(OnNamePropertyChanged), new CoerceValueCallback(OnCoerceNameProperty)), new ValidateValueCallback(OnValidNameProperty));
 
-        private static void OnNameChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static bool OnValidNameProperty(object value)
         {
-            int i;
-            i= 1;
+            return value is string;
+        }
+
+        private static object OnCoerceNameProperty(DependencyObject d, object baseValue)
+        {
+            if (baseValue.ToString().Length > 5)
+                baseValue = string.Empty;
+            return baseValue;
+        }
+
+        private static void OnNamePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            //MessageBox.Show(e.NewValue.ToString());
         }
     }
 }
